@@ -14,12 +14,15 @@ import com.codepath.asynchttpclient.AsyncHttpClient
 import com.codepath.asynchttpclient.RequestParams
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler
 import com.codepath.bestsellerlistapp.R
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import okhttp3.Headers
+import org.json.JSONObject
 
 // --------------------------------//
 // CHANGE THIS TO BE YOUR API KEY  //
 // --------------------------------//
-private const val API_KEY = "GQClcBfG0vU7bGdO63aZPixlwByRLGMg"
+private const val API_KEY = "M1mZzdMxN5pcYbxwWWV9Td9QjAUK2lAY"
 
 /*
  * The class for the only fragment in the app, which contains the progress bar,
@@ -74,8 +77,13 @@ class BestSellerBooksFragment : Fragment(), OnListFragmentInteractionListener {
 
                 //TODO - Parse JSON into Models
 
-                val models : List<BestSellerBook> = null // Fix me!
-                recyclerView.adapter = BestSellerBooksRecyclerViewAdapter(models, this@BestSellerBooksFragment)
+            val resultsJSON : JSONObject = json.jsonObject.get("results") as JSONObject
+            val booksRawJSON : String = resultsJSON.get("books").toString()
+            val gson = Gson()
+            val arrayBookType = object : TypeToken<List<BestSellerBook>>() {}.type
+            val models : List<BestSellerBook> = gson.fromJson(booksRawJSON, arrayBookType)
+
+            recyclerView.adapter = BestSellerBooksRecyclerViewAdapter(models, this@BestSellerBooksFragment)
 
                 // Look for this in Logcat:
                 Log.d("BestSellerBooksFragment", "response successful")
